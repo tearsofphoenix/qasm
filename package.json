@@ -1,13 +1,17 @@
 {
   "name": "qasm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require babel-register --require babel-polyfill ./test/*.spec.js",
+    "prepublishOnly": "rimraf dist/* && babel ./src -d ./dist"
   },
   "author": "",
   "license": "MIT",
+  "files": [
+    "dist/"
+  ],
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
