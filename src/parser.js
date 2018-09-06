@@ -23,7 +23,7 @@ import {
   OP_OPAQUE,
   OP_MULTIPLY,
   OP_DIVIDE,
-  OP_POW, OP_GET_LAST_OP_RESULT, OP_PLUS, OP_MINUS
+  OP_POW, OP_GET_LAST_OP_RESULT, OP_PLUS, OP_MINUS, OP_NEGATIVE
 } from "./opcode";
 const { Lexer, Parser, tokenMatcher } = require("chevrotain")
 
@@ -55,7 +55,6 @@ class QASMParser extends Parser {
       $.CONSUME(RSquare)
       return {code: OP_ARRAY_INDEX, args: [id.image, index]}
     })
-
 
     $.RULE("parenthesisExpression", () => {
       let result
@@ -142,6 +141,13 @@ class QASMParser extends Parser {
             const arg = $.SUBRULE2($.parenthesisExpression)
             return {code: OP_UNARY_OP, args: [func.image, arg]}
           }
+        },
+        {
+          ALT: () => {
+            $.CONSUME(Minus)
+            const arg = $.SUBRULE($.expression)
+            return {code: OP_NEGATIVE, args: [arg]}
+          }
         }
       ])
     })
@@ -175,17 +181,20 @@ class QASMParser extends Parser {
 
     $.RULE('mainprogram', () => {
       const ops = []
-      $.CONSUME(LanguageDecl)
-      const version = parseFloat($.CONSUME(RealNumberLiteral).image)
-      $.CONSUME(Semi)
+      // it's option for library
+      $.OPTION(() => {
+        $.CONSUME(LanguageDecl)
+        const version = parseFloat($.CONSUME(RealNumberLiteral).image)
+        $.CONSUME(Semi)
 
-      ops.push({code: OP_VERSION, args: [version]})
+        ops.push({code: OP_VERSION, args: [version]})
 
-      $.CONSUME(Include)
-      const libraryPath = $.CONSUME(StringLiteral).image
-      $.CONSUME2(Semi)
+        $.CONSUME(Include)
+        const libraryPath = $.CONSUME(StringLiteral).image
+        $.CONSUME2(Semi)
 
-      ops.push({code: OP_INCLUDE, args: [libraryPath]})
+        ops.push({code: OP_INCLUDE, args: [libraryPath]})
+      })
 
       const array = $.SUBRULE($.program)
       return ops.concat(array)
@@ -458,7 +467,7 @@ class QASMParser extends Parser {
 // reuse the same parser instance.
 const parser = new QASMParser([])
 
-module.exports = function(text) {
+export default function (text) {
   const lexResult = QASMLexer.tokenize(text)
   // setting a new input will RESET the parser instance's state.
   parser.input = lexResult.tokens

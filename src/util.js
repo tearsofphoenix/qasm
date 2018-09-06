@@ -9,7 +9,7 @@ import {
   OP_VERSION
 } from "./opcode"
 
-function opToString(op, join) {
+export function opToString(op, join) {
   if (Array.isArray(op)) {
     return op.map(looper => opToString(looper)).join(join || ', ')
   }
@@ -31,7 +31,7 @@ function opToString(op, join) {
     }
     case OP_DECL_CREG: {
       const [name, size] = args
-      return `[DECL_CREG ${name}[${size}]`
+      return `[DECL_CREG] ${name}[${size}]`
     }
     case OP_GATE_OP: {
       const [gatename, params, qargs] = args

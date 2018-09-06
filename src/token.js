@@ -27,7 +27,7 @@ export const Reset = createToken({name: 'Reset', label: 'reset', pattern: /reset
 export const Opaque = createToken({name: 'Opaque', label: 'opaque', pattern: /opaque/})
 export const IF = createToken({name: 'IF', label: 'if', pattern: /if/})
 export const EQUAL = createToken({name: 'EQUAL', label: '==', pattern: /==/})
-export const LanguageDecl = createToken({name: 'LanguageDecl', label: 'Language', pattern: /IBMQASM/})
+export const LanguageDecl = createToken({name: 'LanguageDecl', label: 'Language', pattern: /(IBMQASM|OPENQASM)/})
 export const Include = createToken({name: 'Include', label: 'include', pattern: /include/})
 export const StringLiteral = createToken({name: 'StringLiteral', label: 'String', pattern: /"(:?[^\\"\n\r]+|\\(:?[bfnrtv"\\/]|u[0-9a-fA-F]{4}))*"/})
 

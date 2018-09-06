@@ -47,3 +47,5 @@ export const OP_DIVIDE = 0x20
 export const OP_POW = 0x21
 
 export const OP_GET_LAST_OP_RESULT = 0x22
+
+export const OP_NEGATIVE = 0x23
