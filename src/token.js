@@ -16,11 +16,11 @@ export const Comma = createToken({ name: "Comma", label: ',', pattern: /,/ })
 export const PI = createToken({name: 'PI', label: 'pi', pattern: /pi/})
 export const U = createToken({name: 'U', label: 'U', pattern: /U/})
 export const CX = createToken({name: 'CX', label: 'CX', pattern: /CX/})
-export const gate = createToken({name: 'gate', label: 'gate', pattern: /gate/})
-export const barrier = createToken({name: 'barrier', label: 'barrier', pattern: /barrier/})
-export const qreg = createToken({name: 'qreg', label: 'qreg', pattern: /qreg/})
-export const creg = createToken({name: 'creg', label: 'creg', pattern: /creg/})
-export const measure = createToken({name: 'measure', label: 'measure', pattern: /measure/})
+export const GATE = createToken({name: 'GATE', label: 'gate', pattern: /gate/})
+export const Barrier = createToken({name: 'Barrier', label: 'barrier', pattern: /barrier/})
+export const QREG = createToken({name: 'QREG', label: 'qreg', pattern: /qreg/})
+export const CREG = createToken({name: 'CREG', label: 'creg', pattern: /creg/})
+export const Measure = createToken({name: 'Measure', label: 'measure', pattern: /measure/})
 export const Semi = createToken({name: 'Semi', label: ';', pattern: /;/})
 export const MeasureOP = createToken({name: 'MeasureOP', label: '->', pattern: /\-\>/})
 export const Reset = createToken({name: 'Reset', label: 'reset', pattern: /reset/})
@@ -128,11 +128,11 @@ export default [
   // internal quantum operator
   U,
   CX,
-  barrier,
-  gate,
-  qreg,
-  creg,
-  measure,
+  Barrier,
+  GATE,
+  QREG,
+  CREG,
+  Measure,
   Reset,
   Opaque,
 

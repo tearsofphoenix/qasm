@@ -1,8 +1,8 @@
 import QASMTokens, {
   Identifier, RealNumberLiteral, IntegerLiteral, UnaryOP, MultiplicationOperator,
   AdditionOperator, LSquare, Semi, StringLiteral, Include, RParen, LParen,
-  LanguageDecl, PI, barrier, EQUAL, Opaque, RCurly, RSquare, qreg, LCurly, gate,
-  Reset, MeasureOP, measure, creg, CX, IF, U, Comma, Multi, Div, Pow, Plus, Minus
+  LanguageDecl, PI, Barrier, EQUAL, Opaque, RCurly, RSquare, QREG, LCurly, GATE,
+  Reset, MeasureOP, Measure, CREG, CX, IF, U, Comma, Multi, Div, Pow, Plus, Minus
 } from './token'
 import {
   OP_DECL_CREG,
@@ -41,7 +41,15 @@ function addAllTo(source, dest) {
 }
 
 // ----------------- parser -----------------
-class QASMParser extends Parser {
+/**
+ * parse qasm source code into tokens
+ * @class QASMParser
+ */
+export class QASMParser extends Parser {
+  /**
+   * @constructor
+   * @param {Array} input
+   */
   constructor(input) {
     super(input, QASMTokens)
 
@@ -264,7 +272,7 @@ class QASMParser extends Parser {
         },
         {
           ALT: () => {
-            $.CONSUME(barrier)
+            $.CONSUME(Barrier)
             const result = $.SUBRULE($.mixedlist)
             $.CONSUME4(Semi)
             ops.push({code: OP_BARRIER, args: [result]})
@@ -280,13 +288,13 @@ class QASMParser extends Parser {
       $.OR([
         {
           ALT: () => {
-            $.CONSUME(qreg)
+            $.CONSUME(QREG)
             code = OP_DECL_QREG
           }
         },
         {
           ALT: () => {
-            $.CONSUME(creg)
+            $.CONSUME(CREG)
             code = OP_DECL_CREG
           }
         }
@@ -301,7 +309,7 @@ class QASMParser extends Parser {
     })
 
     $.RULE('gatedecl', () => {
-      $.CONSUME(gate)
+      $.CONSUME(GATE)
       const gatename = $.CONSUME(Identifier).image
       let params = []
       $.OPTION(() => {
@@ -331,7 +339,7 @@ class QASMParser extends Parser {
           }},
         {
           ALT: () => {
-            $.CONSUME(barrier)
+            $.CONSUME(Barrier)
             const ids = $.SUBRULE($.idlist)
             $.CONSUME(Semi)
             ops.push({code: OP_BARRIER, args: [ids]})
@@ -356,7 +364,7 @@ class QASMParser extends Parser {
           }
         },
         { ALT: () => {
-            $.CONSUME(measure)
+            $.CONSUME(Measure)
             const q = $.SUBRULE($.argument)
             $.CONSUME(MeasureOP)
             const c = $.SUBRULE2($.argument)
@@ -467,6 +475,11 @@ class QASMParser extends Parser {
 // reuse the same parser instance.
 const parser = new QASMParser([])
 
+/**
+ * wrapped parse function, will return tokens, `value` is operations
+ * @param text
+ * @return {{tokens: IToken[], value: *, lexErrors: ILexingError[], parseErrors: IRecognitionException[]}}
+ */
 export default function (text) {
   const lexResult = QASMLexer.tokenize(text)
   // setting a new input will RESET the parser instance's state.

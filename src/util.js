@@ -9,6 +9,12 @@ import {
   OP_VERSION
 } from "./opcode"
 
+/**
+ * return string representation of Operation
+ * @param {{code: number, args: []}} op
+ * @param {string} join
+ * @return {string}
+ */
 export function opToString(op, join) {
   if (Array.isArray(op)) {
     return op.map(looper => opToString(looper)).join(join || ', ')
@@ -55,6 +61,10 @@ export function opToString(op, join) {
   }
 }
 
+/**
+ * print an operation array
+ * @param {Array<{code: number, args: []}>} ops
+ */
 export function printOperations(ops) {
   if (ops && Array.isArray(ops)) {
     const str = ops.map(op => opToString(op)).join('\n')

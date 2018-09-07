@@ -4,6 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
+    "doc": "./node_modules/.bin/esdoc",
     "test": "mocha --require babel-register --require babel-polyfill ./test/*.spec.js",
     "prepublishOnly": "rimraf dist/* && babel ./src -d ./dist"
   },
