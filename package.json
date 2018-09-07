@@ -1,7 +1,7 @@
 {
   "name": "qasm",
   "version": "1.2.0",
-  "description": "",
+  "description": "QASM source code parser",
   "main": "dist/index.js",
   "scripts": {
     "doc": "./node_modules/.bin/esdoc",

@@ -1,0 +1,201 @@
+h1 {
+    font-family: Arial;
+    font-size: 2.2vh;
+    color: #1b138d;
+    padding: 0;
+    margin: 1vh 0 0 1vh;
+    float: left;
+}
+
+div {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+h3 {
+    font-family: Arial;
+    font-size: 1.5vh;
+    color: #1b138d;
+    margin: 1.4vh 0 0 0;
+    padding: 0 0.3vh 0 0;
+}
+
+option {
+    padding: 0;
+}
+
+body {
+    margin: 0 0.5vw;
+}
+
+.verticalSeparator {
+    width: 0.7vw;
+    height: 100vh;
+    float: left;
+    cursor: col-resize;
+}
+
+.verticalDragHandle {
+    position: relative;
+    top: 50%;
+    left: 38%;
+    font-size: 1vw;
+    display: block;
+    color: #777;
+}
+
+.horizontalDragHandle {
+    position: relative;
+    top: -0.08vh;
+    left: 50%;
+    font-size: 1.6vh;
+    display: block;
+    color: #777;
+}
+
+.horizontalSeparator {
+    width: 100%;
+    height: 1.12vh;
+    cursor: row-resize;
+    /* needed to avoid the '...' icon with the block display to expand outside the separator div */
+    overflow: hidden;
+}
+
+.sideEditor {
+    margin: 0.7vh 0 0;
+    padding: 0;
+    border: none;
+    height: 100%;
+    width: 49.63%;
+    display: block;
+}
+
+.leftSide {
+    float: left;
+}
+
+.rightSide {
+    float: left;
+}
+
+.select {
+    stroke-width: 0;
+    float: left;
+    font-size: 1.5vh;
+    margin: 1.25vh 1.25vh 0 0;
+    padding: 0;
+    border: 0.4vh;
+    height: 2.2vh;
+}
+
+.boxHeader {
+    background-color: #a8c5d3;
+    overflow: auto;
+    border-bottom: solid;
+    border-bottom-width: thin;
+    border-color: #263666;
+    height: 4.7vh;
+}
+
+.diagramHeader {
+    cursor: pointer;
+    display: inline-block;
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 18px;
+    margin-bottom: -8px;
+    text-align: center;
+}
+
+.diagramHeaderDef {
+    background-color: lightgreen;
+}
+
+svg.railroad-diagram text {
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+svg.railroad-diagram g.non-terminal rect.diagramRectUsage {
+    color: green;
+    fill: yellow;
+    stroke: 5;
+}
+
+svg.railroad-diagram g.terminal rect.diagramRectUsage {
+    color: green;
+    fill: yellow;
+    stroke: 5;
+}
+
+.markEvalError {
+    font-size: 1.2em;
+    font-weight: bolder;
+    color: red;
+}
+
+.markTextError {
+    display: inline-block;
+    position: relative;
+}
+
+.markTextError:before {
+    content: "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+    font-size: 0.8em;
+    font-weight: bolder;
+    font-family: Times New Roman, Serif;
+    color: red;
+    width: 100%;
+    position: absolute;
+    top: 6px;
+    overflow: hidden;
+}
+
+.markDiagramsTextHover {
+    background-color: lightgreen;
+    font-weight: bolder;
+}
+
+.markDiagramsUsageTextHover {
+    background-color: yellow;
+    font-weight: bolder;
+}
+
+.markSelectedDiagramsUsageTextHover {
+    background-color: yellow;
+    font-weight: bolder;
+    text-decoration: underline;
+}
+
+.card {
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+svg {
+    width: 100%;
+}
+
+svg.railroad-diagram text {
+    cursor: pointer;
+}
+
+.CodeMirror-vscrollbar {
+    position: absolute;
+    z-index: 6;
+    display: block;
+}

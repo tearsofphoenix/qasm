@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<!--100vh needed for IE 11 (maybe others too) otherwise html.height will return 3 -->
+<html style="height: 100vh">
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/chevrotain/diagrams/diagrams.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="./playground.css">
+
+    <script src="https://unpkg.com/lodash/lodash.js"></script>
+    <script src="https://unpkg.com/jquery/dist/jquery.js"></script>
+    <script src="libs/jquery.svg.js"></script>
+    <script src="libs/jquery.svgdom.js"></script>
+    <script src="https://unpkg.com/chevrotain/lib/chevrotain.js"></script>
+    <script src="https://unpkg.com/codemirror/lib/codemirror.js"></script>
+    <script src="https://unpkg.com/codemirror/mode/javascript/javascript.js"></script>
+    <script src="https://unpkg.com/xregexp/xregexp-all.js"></script>
+
+    <script src="utils.js"></script>
+    <script src="editors.js"></script>
+    <script src="errorMarkers.js"></script>
+    <script src="examples.js"></script>
+
+    <script src="editorHighlights.js"></script>
+    <script src="layout.js"></script>
+
+    <script src="https://unpkg.com/chevrotain/diagrams/vendor/railroad-diagrams.js"></script>
+    <script src="https://unpkg.com/chevrotain/diagrams/src/diagrams_builder.js"></script>
+    <script src="https://unpkg.com/chevrotain/diagrams/src/diagrams_behavior.js"></script>
+
+    <title>Playground</title>
+</head>
+<body style="background-color: #f1f1f1; margin-left: 0.7vh; margin-right:0.7vh">
+
+<div id="left" class="sideEditor leftSide">
+    <div id="impel" class="card" style="width: 100%; overflow:hidden; height: 76vh">
+        <div class="boxHeader">
+            <h1>Parser</h1>
+
+            <div style="float: right;">
+                <h3 style="float: left;">Grammar:</h3>
+                <label for="example-choice"></label>
+                <select id="example-choice" class="select"></select>
+            </div>
+        </div>
+        <label for="parserImplementationEditor"></label>
+        <textarea id="parserImplementationEditor"></textarea>
+    </div>
+
+    <div class="horizontalSeparator"
+         onmousedown="startVerticalLeft(event)">
+        <i class="fa fa-ellipsis-h horizontalDragHandle"> </i>
+    </div>
+
+    <div id="input" class="card" style="width: 100%; overflow: hidden; height: 21vh">
+        <div class="boxHeader">
+            <h1>Input</h1>
+
+            <div style="float: right">
+                <h3 style="float: left">Sample:</h3>
+                <label for="samples-choice"></label>
+                <select id="samples-choice" class="select"></select>
+            </div>
+        </div>
+        <label for="parserInputEditor"></label>
+        <textarea id="parserInputEditor"></textarea>
+    </div>
+</div>
+
+<div class="verticalSeparator" onmousedown="startResizeHorizontal(event)">
+    <i class="fa fa-ellipsis-v verticalDragHandle"> </i>
+</div>
+
+<div id="right" class="sideEditor rightSide">
+
+    <div id="rightTop" class="card" style="width: 100%; overflow:hidden; height: 76vh">
+        <div class="boxHeader">
+            <h1>Syntax Diagrams</h1>
+        </div>
+
+        <div id="diagramsDiv" class="card" align="center" style="width: 100%; height:71.3vh; overflow-y: scroll"></div>
+    </div>
+
+
+    <div id="rightHorizontalSeparator" class="horizontalSeparator" onmousedown="startVerticalRight(event)">
+        <i class="fa fa-ellipsis-h horizontalDragHandle"> </i>
+    </div>
+
+    <div id="output" class="card" style="width: 100%; overflow: hidden; height: 21vh">
+        <div class="boxHeader">
+            <h1>Output</h1>
+        </div>
+        <label for="parserOutput"></label>
+        <textarea id="parserOutput"></textarea>
+    </div>
+</div>
+
+<script>
+
+  // global state
+  var lexer = null
+  var parser = null
+  var visitor = null
+  var defaultRuleName = null
+  var javaScriptEditor = null
+  var inputEditor = null
+  var inputEditorMarkers = []
+  var lexerErrorsMarkers = []
+  var parserErrorsMarkers = []
+  var examplesDropdown = null
+  var samplesDropdown = null
+  var parserOutput = null
+  var diagramsDiv = null
+  var diagramsHeaderOrgHtml = null
+  var impelEditorDiv = null
+  var inputEditorDiv = null
+  var outputEditorDiv = null
+
+  wrapChevrotainLexer()
+
+
+  $(document).ready(function init() {
+    // defer error handling so we can display error markers visually
+    // instead of using the default chevrotain behavior of throwing exceptions.
+    chevrotain.Parser.DEFER_DEFINITION_ERRORS_HANDLING = true
+
+    // init global state
+    examplesDropdown = $("#example-choice")
+    samplesDropdown = $("#samples-choice")
+    diagramsDiv = _.first($("#diagramsDiv"))
+    diagramsHeaderOrgHtml = diagramsDiv.innerHTML
+
+    var implTextArea = $("#parserImplementationEditor")
+    javaScriptEditor = CodeMirror.fromTextArea(_.first(implTextArea), {
+      lineNumbers: true,
+      viewportMargin: 10
+    })
+
+    javaScriptEditor.on("change", _.debounce(onImplementationEditorContentChange, 250))
+
+    inputEditor = CodeMirror.fromTextArea(_.first($("#parserInputEditor")), {
+      lineNumbers: true,
+      viewportMargin: 10
+    })
+
+    inputEditor.on("change", _.debounce(onInputEditorContentChange, 250))
+
+    parserOutput = CodeMirror.fromTextArea(_.first($("#parserOutput")), {
+      lineNumbers: true,
+      viewportMargin: 10,
+      readOnly: true
+    })
+
+    inputEditor.setOption("mode", "text")
+    parserOutput.setOption("mode", "text")
+
+    javaScriptEditor.setSize("100%", "100%")
+    inputEditor.setSize("100%", "100%")
+    parserOutput.setSize("100%", "100%")
+
+    initCodeMirrorVScroll()
+
+    initExamplesDropDown()
+    examplesDropdown.change(function () {
+      loadExample(examplesDropdown.val())
+    })
+
+    var urlParamExample = getUrlParameter("example")
+    if (urlParamExample) {
+      examplesDropdown.value = urlParamExample
+      $(examplesDropdown).val(urlParamExample);
+      loadExample(urlParamExample, true)
+    }
+    else {
+      loadExample("QASM grammar and embedded semantics", true)
+    }
+    updateSamplesDropDown()
+
+    samplesDropdown.change(function () {
+      loadSamples(samplesDropdown.val())
+    })
+
+    $(document).mouseup(endResize)
+    $(document).mousemove(resizeRoot)
+
+    impelEditorDiv = _.first($("#impel").find(".cm-s-default"))
+    impelEditorDiv.id = "impelEditorDiv"
+    inputEditorDiv = _.first($("#input").find(".cm-s-default"))
+    inputEditorDiv.id = "inputEditorDiv"
+    outputEditorDiv = _.first($("#output").find(".cm-s-default"))
+    outputEditorDiv.id = "outputEditorDiv"
+
+    initCodeMirrorDivsViewPortHeight()
+  })
+</script>
+
+</body>
+</html>
+
