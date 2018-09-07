@@ -8,7 +8,7 @@ or if using `yarn`:
 ```
 yarn add qasm
 ```
-##How to use
+## How to use
 This is a simple example:  
 ```js  
 import {parse, printOperations} from 'qasm'
@@ -19,10 +19,12 @@ const {tokens, value} = parse(sourceCode)
 printOperations(value)
 
 ```
-##Grammar diagram
 
-##OpenQASM Specification
+## Grammar diagram
+[Grammer](https://tearsofphoenix.github.io/qasm/)
+
+## OpenQASM Specification
 [https://github.com/Qiskit/openqasm](https://github.com/Qiskit/openqasm)
 
-##License
+## License
 MIT
