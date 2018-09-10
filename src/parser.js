@@ -98,7 +98,7 @@ export class QASMParser extends Parser {
         ops.push(op)
       })
       if (ops.length === 0) {
-        return lhs
+        ops.push(lhs)
       }
       return ops
     })
@@ -126,44 +126,46 @@ export class QASMParser extends Parser {
         ops.push(op)
       })
       if (ops.length === 0) {
-        return lhs
+        ops.push(lhs)
       }
       return ops
     })
 
     $.RULE("atomicExpression", () => {
+      let result
       $.OR([
         // parenthesisExpression has the highest precedence and thus it appears
         // in the "lowest" leaf in the expression ParseTree.
-        { ALT: () => $.SUBRULE($.parenthesisExpression) },
-        { ALT: () => parseFloat($.CONSUME(RealNumberLiteral).image) },
-        { ALT: () => parseInt($.CONSUME(IntegerLiteral).image, 10) },
+        { ALT: () => result = $.SUBRULE($.parenthesisExpression) },
+        { ALT: () => result = parseFloat($.CONSUME(RealNumberLiteral).image) },
+        { ALT: () => result = parseInt($.CONSUME(IntegerLiteral).image, 10) },
         {
           ALT: () => {
             $.CONSUME(PI)
-            return Math.PI
+            result = Math.PI
           }
         },
         {
           ALT: () => {
             const id = $.CONSUME(Identifier).image
-            return {code: OP_INDEX, args: [id]}
+            result = {code: OP_INDEX, args: [id]}
           }
         },
         { ALT: () => {
             const func = $.CONSUME(UnaryOP)
             const arg = $.SUBRULE2($.parenthesisExpression)
-            return {code: OP_UNARY_OP, args: [func.image, arg]}
+            result = {code: OP_UNARY_OP, args: [func.image, arg]}
           }
         },
         {
           ALT: () => {
             $.CONSUME(Minus)
             const arg = $.SUBRULE($.expression)
-            return {code: OP_NEGATIVE, args: [arg]}
+            result = {code: OP_NEGATIVE, args: [arg]}
           }
         }
       ])
+      return result
     })
 
     $.RULE('expression', () => $.SUBRULE($.additionExpression))
@@ -397,7 +399,7 @@ export class QASMParser extends Parser {
           ALT: () => {
             $.CONSUME(U)
             $.CONSUME(LParen)
-            const exps = $.SUBRULE($.idlist)
+            const exps = $.SUBRULE($.explist)
             $.CONSUME(RParen)
             const args = $.SUBRULE2($.argument)
             $.CONSUME(Semi)
