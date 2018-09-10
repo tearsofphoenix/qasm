@@ -13,4 +13,13 @@ describe('token test', () => {
     console.log('----------------------------')
     printOperations(value)
   });
+
+  it('should parse U ', function () {
+    const content = `gate u3 (theta, phi, lambda) q
+     { U(theta, phi, lambda) q; }
+    `
+    const {value} = parse(content)
+    const [gatename, params, qargs, body] = value[0].args
+    console.log(body[0])
+  });
 })

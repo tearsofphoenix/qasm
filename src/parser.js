@@ -97,6 +97,9 @@ export class QASMParser extends Parser {
         }
         ops.push(op)
       })
+      if (ops.length === 0) {
+        return lhs
+      }
       return ops
     })
 
@@ -122,6 +125,9 @@ export class QASMParser extends Parser {
         }
         ops.push(op)
       })
+      if (ops.length === 0) {
+        return lhs
+      }
       return ops
     })
 
@@ -391,9 +397,9 @@ export class QASMParser extends Parser {
           ALT: () => {
             $.CONSUME(U)
             $.CONSUME(LParen)
-            const exps = $.SUBRULE($.explist)
+            const exps = $.SUBRULE($.idlist)
             $.CONSUME(RParen)
-            const args = $.SUBRULE($.argument)
+            const args = $.SUBRULE2($.argument)
             $.CONSUME(Semi)
             ops.push({code: OP_U, args: [exps, args]})
           }
@@ -401,9 +407,9 @@ export class QASMParser extends Parser {
         {
           ALT: () => {
             $.CONSUME(CX)
-            const arg1 = $.SUBRULE2($.argument)
+            const arg1 = $.SUBRULE3($.argument)
             $.CONSUME(Comma)
-            const arg2 = $.SUBRULE3($.argument)
+            const arg2 = $.SUBRULE4($.argument)
             $.CONSUME2(Semi)
             ops.push({code: OP_CX, args: [arg1, arg2]})
           }
